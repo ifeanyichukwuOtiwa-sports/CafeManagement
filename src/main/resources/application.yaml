@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: cafe-management-app
+  datasource:
+    url: ${DATASOURCE_URL:jdbc:mysql://localhost:6033/iwo_cafe}
+    username: ${DATASOURCE_USERNAME:root}
+    password: ${DATASOURCE_PASSWORD:123456}
+  liquibase:
+    change-log: classpath:changelog/changelog-master.yaml

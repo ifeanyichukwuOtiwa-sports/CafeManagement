@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - include:
+      file: "init-tables.sql"
+      relativeToChangelogFile: true
+
+  - include:
+      file: "25-SEPT-2024/init-user-schema.yaml"
+      relativeToChangelogFile: true

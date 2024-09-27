@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      id: 25-SEPT-2024_init_user_schema
+      author: Ifeanyichukwu Otiwa
+      changes:
+        - sql:
+            sql: |
+               CREATE TABLE IF NOT EXISTS user (
+                  user_id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                  first_name VARCHAR(255) NOT NULL,
+                  last_name VARCHAR(255) NOT NULL,
+                  email VARCHAR(255) UNIQUE NOT NULL,
+                  password VARCHAR(255) NOT NULL,
+                  phone_number VARCHAR(14) NOT NULL,
+                  role VARCHAR(255) NOT NULL,
+                  status VARCHAR(255) NOT NULL,
+                  created_at DATETIME DEFAULT NOW(),
+                  updated_at DATETIME DEFAULT NULL ON UPDATE NOW()
+               );
