@@ -6,3 +6,11 @@ databaseChangeLog:
   - include:
       file: "25-SEPT-2024/init-user-schema.yaml"
       relativeToChangelogFile: true
+
+  - include:
+      file: "30-SEPT-2024/init-admin-user-roles-schema.yaml"
+      relativeToChangelogFile: true
+
+  - include:
+      file: "30-SEPT-2024/init-category-schema.yaml"
+      relativeToChangelogFile: true

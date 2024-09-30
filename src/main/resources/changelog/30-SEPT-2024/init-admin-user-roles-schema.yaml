@@ -1,0 +1,51 @@
+databaseChangeLog:
+  - changeSet:
+      id: 30-SEPT-2024_init_admin_user_schema
+      author: Ifeanyichukwu Otiwa
+      changes:
+        - sql:
+            sql: |
+              CREATE TABLE IF NOT EXISTS admin_user (
+                id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                role_id BIGINT DEFAULT 1,
+                firstname VARCHAR(50) UNIQUE NOT NULL,
+                lastname VARCHAR(255) NOT NULL,
+                email VARCHAR(255) UNIQUE NOT NULL,
+                password VARCHAR(255) NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+              );
+
+  - changeSet:
+      id: 30-SEPT-2024_init_role_schema
+      author: Ifeanyichukwu Otiwa
+      changes:
+        - sql:
+            sql: |
+              CREATE TABLE IF NOT EXISTS role (
+                id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                name VARCHAR(255) UNIQUE NOT NULL
+              );
+
+  - changeSet:
+      id: 30-SEPT-2024_init_permissions_table
+      author: Ifeanyichukwu Otiwa
+      changes:
+        - sql:
+            sql: |
+              CREATE TABLE IF NOT EXISTS permission (
+                id BIGINT NOT NULL,
+                role_id BIGINT,
+                name VARCHAR(255) NOT NULL,
+                resource VARCHAR(255) NULL,
+                action VARCHAR(255) NULL,
+                PRIMARY KEY (id, role_id)
+              );
+
+  - changeSet:
+      id: 30-SEPT-2024_init_SUPER_ADMIN_table
+      author: Ifeanyichukwu Otiwa
+      changes:
+        - sql:
+            sql: |
+              INSERT INTO role(id, name)
+              VALUES (1, 'SUPERADMIN')

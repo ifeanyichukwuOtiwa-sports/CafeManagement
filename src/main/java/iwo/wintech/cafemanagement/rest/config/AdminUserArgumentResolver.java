@@ -1,5 +1,6 @@
 package iwo.wintech.cafemanagement.rest.config;
 
+import iwo.wintech.cafemanagement.dto.AdminDto;
 import iwo.wintech.cafemanagement.dto.UserDto;
 import iwo.wintech.cafemanagement.exception.ErrorCode;
 import iwo.wintech.cafemanagement.security.TemporaryLoginHolder;
@@ -12,36 +13,34 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import java.util.Optional;
-
 @Component
 @RequiredArgsConstructor
-public class UserArgumentResolver implements HandlerMethodArgumentResolver {
+public class AdminUserArgumentResolver implements HandlerMethodArgumentResolver {
 
-    private static final String HEADER_NAME = "x-access-token";
+    private static final String HEADER_NAME = "x-access-admin-token";
 
     private final TemporaryLoginHolder loginHolder;
     private final Converter converter;
 
     @Override
     public boolean supportsParameter(final MethodParameter parameter) {
-        return UserDto.class.isAssignableFrom(parameter.getParameterType());
+        return AdminDto.class.isAssignableFrom(parameter.getParameterType());
     }
 
     @Override
-    public UserDto resolveArgument(final MethodParameter parameter, final ModelAndViewContainer mavContainer,
+    public AdminDto resolveArgument(final MethodParameter parameter, final ModelAndViewContainer mavContainer,
                                   final NativeWebRequest webRequest, final WebDataBinderFactory binderFactory) {
 
         // get x-pawa-token value from header
         final String token = webRequest.getHeader(HEADER_NAME);
 
         if (token == null) {
-            throw ErrorCode.USER_TOKEN_NOT_PROVIDED.requestException("Token not provided");
+            throw ErrorCode.ADMIN_TOKEN_NOT_PROVIDED.requestException("Token not provided");
         }
 
         // from temporary login holder get user using token
-        return loginHolder.getTemporaryLogin(token)
+        return loginHolder.getTemporaryAdminLogin(token)
                 .map(converter::convert)
-                .orElseThrow(() -> new RuntimeException("User not logged in"));
+                .orElseThrow(() -> new RuntimeException("Admin not logged in"));
     }
 }

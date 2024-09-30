@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: 30-SEPT-2024_init_category_schema
+      author: Ifeanyichukwu Otiwa
+      changes:
+        - sql:
+            sql: |
+              CREATE TABLE IF NOT EXISTS category (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                name VARCHAR(255) NOT NULL,
+                description TEXT
+              );

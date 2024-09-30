@@ -1,7 +1,5 @@
 package iwo.wintech.cafemanagement.service.events;
 
-import iwo.wintech.cafemanagement.dto.UserDto;
-import iwo.wintech.cafemanagement.service.api.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.mail.SimpleMailMessage;
@@ -13,7 +11,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @Component
 public class EmailNotificationService {
-    private final UserService userService;
     private final JavaMailSender mailSender;
 
     private void sendNotification(final EmailMessage message) {
@@ -28,10 +25,7 @@ public class EmailNotificationService {
 
     @EventListener(UserNotificationEvent.class)
     public void handleUserNotificationEvent(UserNotificationEvent event) {
-        final Long userId = event.userId();
-
-        final UserDto user = userService.findById((userId));
-        final String email = user.email();
+        final String email = event.email();
 
         final EmailMessageType messageType = event.message();
         final BaseMessage message = EmailMessageTemplate.getMessage(messageType);

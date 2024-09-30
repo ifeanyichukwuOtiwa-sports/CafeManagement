@@ -3,6 +3,7 @@ package iwo.wintech.cafemanagement.security;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import iwo.wintech.cafemanagement.entity.User;
+import iwo.wintech.cafemanagement.entity.admin.AdminUser;
 import lombok.With;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +17,11 @@ import java.util.UUID;
 public class TemporaryLoginHolder {
     private static final Duration EXPIRATION = Duration.ofMinutes(30);
     private static final long MAX_SIZE = 1000;
-    private final Cache<String, SessionData> logingCache = Caffeine.newBuilder()
+    private final Cache<String, SessionData<User>> logingCache = Caffeine.newBuilder()
+            .maximumSize(MAX_SIZE)
+            .expireAfterAccess(EXPIRATION)
+            .build();
+    private final Cache<String, SessionData<AdminUser>> adminLoadingCache = Caffeine.newBuilder()
             .maximumSize(MAX_SIZE)
             .expireAfterAccess(EXPIRATION)
             .build();
@@ -24,17 +29,19 @@ public class TemporaryLoginHolder {
     public String createSession(final User user) {
         final String token = UUID.randomUUID().toString();
         final Instant lastAccessed = Instant.now();
-        final SessionData sessionData = new SessionData(user, token, lastAccessed);
+        final SessionData<User> sessionData = new SessionData<>(user, token, lastAccessed);
         logingCache.put(token, sessionData);
         return token;
     }
+
+
 
     public Optional<User> getTemporaryLogin(final String token) {
         return Optional.ofNullable(token)
                 .flatMap(tokes -> Optional.ofNullable(logingCache.getIfPresent(tokes)))
                 .map(sessionData -> {
                     logingCache.put(token, sessionData.withLastAccessed(Instant.now()));
-                    return sessionData.user;
+                    return sessionData.user();
                 });
     }
 
@@ -53,9 +60,32 @@ public class TemporaryLoginHolder {
 
     }
 
+    public Optional<AdminUser> getTemporaryAdminLogin(final String token) {
+        return Optional.ofNullable(token)
+               .flatMap(tokes -> Optional.ofNullable(adminLoadingCache.getIfPresent(tokes)))
+               .map(sessionData -> {
+                   adminLoadingCache.put(token, sessionData.withLastAccessed(Instant.now()));
+                    return sessionData.user();
+                });
+    }
+
+    public void invalidateAdmin(final AdminUser adminUser) {
+        adminLoadingCache.asMap()
+               .entrySet()
+               .removeIf(entry -> Objects.equals(entry.getValue().user(), adminUser));
+    }
+
+    public String createAdminSession(final AdminUser adminUser) {
+        final String token = UUID.randomUUID().toString();
+        final Instant lastAccessed = Instant.now();
+        final SessionData<AdminUser> sessionData = new SessionData<>(adminUser, token, lastAccessed);
+        adminLoadingCache.put(token, sessionData);
+        return token;
+    }
+
     @With
-    private record SessionData(
-            User user,
+    private record SessionData<T>(
+            T user,
             String token,
             Instant lastAccessed
     ) {

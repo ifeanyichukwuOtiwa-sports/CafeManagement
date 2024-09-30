@@ -22,6 +22,7 @@ import java.util.Optional;
 @Component
 public class CafeMgmtAuthenticationFilter extends AuthenticationFilter {
     private static final String HEADER_NAME = "x-access-token";
+    private static final String ADMIN_HEADER_NAME = "x-access-admin-token";
     private final ObjectMapper mapper;
 
     public CafeMgmtAuthenticationFilter(final AuthenticationManager authenticationManager, final ObjectMapper mapper) {
@@ -56,6 +57,13 @@ public class CafeMgmtAuthenticationFilter extends AuthenticationFilter {
         public Authentication convert(final HttpServletRequest request) {
             final String token = request.getHeader(HEADER_NAME);
             return Optional.ofNullable(token)
+                    .map(CafeMgmtAuthentication::unAuthentication)
+                    .orElseGet(() -> resolveAdminToken(request));
+        }
+
+        private Authentication resolveAdminToken(final HttpServletRequest request) {
+            final String adminToken = request.getHeader(ADMIN_HEADER_NAME);
+            return Optional.ofNullable(adminToken)
                     .map(CafeMgmtAuthentication::unAuthentication)
                     .orElse(null);
         }

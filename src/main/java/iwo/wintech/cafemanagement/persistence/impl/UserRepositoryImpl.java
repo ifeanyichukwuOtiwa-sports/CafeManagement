@@ -165,4 +165,20 @@ public class UserRepositoryImpl implements UserRepository {
                .paramSource(params)
                .update();
     }
+
+    @Override
+    public void updateUsersStatusByIds(final List<String> emails, final String aTrue) {
+        final String sql = """
+                UPDATE user
+                SET status = :status
+                WHERE email IN (:emails)
+                """;
+        final SqlParameterSource params = new MapSqlParameterSource()
+               .addValue("status", aTrue)
+               .addValue("email", emails);
+
+        dbClient.sql(sql)
+               .paramSource(params)
+               .update();
+    }
 }

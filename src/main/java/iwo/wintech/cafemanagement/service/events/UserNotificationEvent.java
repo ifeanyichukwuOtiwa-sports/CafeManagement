@@ -1,7 +1,7 @@
 package iwo.wintech.cafemanagement.service.events;
 
 public record UserNotificationEvent(
-        Long userId,
+        String email,
         EmailMessageType message,
         String params) {
 }

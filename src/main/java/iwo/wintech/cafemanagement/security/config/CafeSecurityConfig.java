@@ -25,11 +25,13 @@ public class CafeSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(r -> r.requestMatchers("/api/cafe/v1/user/auth/login").permitAll()
-                        .requestMatchers("/api/cafe/v1/user/auth/sign-up").permitAll()
-                        .requestMatchers("/api/cafe/v1/user/auth/forgot-password").permitAll()
-                        .requestMatchers("/api/cafe/v1/user/auth/check-token").permitAll()
-                        .anyRequest().authenticated()
+                .authorizeHttpRequests(
+                        r -> r.requestMatchers("/api/cafe/v1/user/auth/login").permitAll()
+                                .requestMatchers("/api/cafe/v1/user/auth/sign-up").permitAll()
+                                .requestMatchers("/api/cafe/v1/user/auth/forgot-password").permitAll()
+                                .requestMatchers("/api/cafe/v1/user/auth/check-token").permitAll()
+                                .requestMatchers("/api/cafe/v1/admin/auth/**").permitAll()
+                                .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .with(customAuthConfigurer, Customizer.withDefaults());

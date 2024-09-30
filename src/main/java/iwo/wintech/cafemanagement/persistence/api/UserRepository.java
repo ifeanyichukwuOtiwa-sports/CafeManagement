@@ -16,4 +16,5 @@ public interface UserRepository {
     void updateUser(User updateRequest);
     void updateUsersStatus(final List<Long> userIds, String status);
     void updateUserPassword(Long userId, String password);
+    void updateUsersStatusByIds(List<String> userIds, String aTrue);
 }

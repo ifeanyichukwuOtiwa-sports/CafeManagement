@@ -12,8 +12,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RestConfig implements WebMvcConfigurer {
     private final UserArgumentResolver userArgumentResolver;
+    private final AdminUserArgumentResolver adminUserArgumentResolver;
+
     @Override
     public void addArgumentResolvers(@Nonnull final List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(userArgumentResolver);
+        resolvers.add(adminUserArgumentResolver);
     }
 }

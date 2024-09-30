@@ -1,5 +1,6 @@
 package iwo.wintech.cafemanagement.service.impl;
 
+import iwo.wintech.cafemanagement.dto.AdminDto;
 import iwo.wintech.cafemanagement.dto.UserDto;
 import iwo.wintech.cafemanagement.dto.UserInfoUpdateRequest;
 import iwo.wintech.cafemanagement.entity.User;
@@ -10,6 +11,7 @@ import iwo.wintech.cafemanagement.service.events.EmailMessageType;
 import iwo.wintech.cafemanagement.service.events.UserNotificationEvent;
 import iwo.wintech.cafemanagement.service.mapper.Converter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -19,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
+@Slf4j
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
@@ -43,7 +46,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> getAllUsers() {
+    public List<UserDto> getAllUsers(final AdminDto admin) {
         final List<User> allUsers = userRepository.getAllUsers();
         return allUsers.stream()
                 .map(converter::convert)
@@ -63,10 +66,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void enableUsers(final List<Long> userIds) {
-        validateUsers(userIds);
-        userRepository.updateUsersStatus(userIds, "true");
-        userIds.forEach(id -> sendNotificationToUsers(new UserNotificationEvent(id, EmailMessageType.REGISTRATION_CONFIRMED, null)));
+    public void enableUsers(final List<String> emails, final AdminDto admin) {
+        if (emails.isEmpty()){
+            log.warn("No emails");
+            return;
+        }
+        validateUsersEmail(emails);
+        userRepository.updateUsersStatusByIds(emails, "true");
+        emails.forEach(id -> sendNotificationToUsers(new UserNotificationEvent(id, EmailMessageType.REGISTRATION_CONFIRMED, null)));
 
     }
 
@@ -109,6 +116,11 @@ public class UserServiceImpl implements UserService {
 
     @SuppressWarnings("all")
     private void validateUsers(final List<Long> userIds) {
+        // Todo: left Empty for now
+    }
+
+    @SuppressWarnings("all")
+    private void validateUsersEmail(final List<String> emails) {
         // Todo: left Empty for now
     }
 }

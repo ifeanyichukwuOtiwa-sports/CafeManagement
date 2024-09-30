@@ -22,7 +22,13 @@ public class CafeMgmtAuthenticationProvider implements AuthenticationProvider {
 
         return loginHolder.getTemporaryLogin(token)
                 .map(CafeMgmtAuthentication::authenticated)
-               .orElseThrow(() -> new BadCredentialsException("Invalid token"));
+                .orElseGet(() -> resolveAdminLogin(token));
+    }
+
+    private CafeMgmtAuthentication resolveAdminLogin(final String token) {
+        return loginHolder.getTemporaryAdminLogin(token)
+                .map(CafeMgmtAuthentication::adminAuthenticated)
+                .orElseThrow(() -> new BadCredentialsException("Invalid token"));
     }
 
     @Override

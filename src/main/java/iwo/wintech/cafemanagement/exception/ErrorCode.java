@@ -9,7 +9,10 @@ public enum ErrorCode {
     USER_NOT_FOUND("User not found"),
     USER_ALREADY_EXISTS("User already exists"),
     USER_NOT_ACTIVE("User is not yet active"),
-    INVALID_CREDENTIALS("Invalid credentials");
+    INVALID_USER_CREDENTIALS("Invalid User credentials"),
+    INVALID_ADMIN_CREDENTIALS("Invalid admin credentials"),
+    USER_TOKEN_NOT_PROVIDED("User Token not found"),
+    ADMIN_TOKEN_NOT_PROVIDED("Admin Token not found");
 
     private final String key;
 

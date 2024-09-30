@@ -1,5 +1,6 @@
 package iwo.wintech.cafemanagement.rest.user;
 
+import iwo.wintech.cafemanagement.dto.AdminDto;
 import iwo.wintech.cafemanagement.dto.LoginDto;
 import iwo.wintech.cafemanagement.dto.SignupDto;
 import iwo.wintech.cafemanagement.dto.UserDto;
@@ -41,11 +42,6 @@ public class CafeMgmtUserAuthController {
     public ResponseEntity<String> forgotPassword(@RequestBody final String email) {
         final String response = authService.forgetPassword(email);
         return ResponseEntity.ok(response);
-    }
-
-    @GetMapping("check-token")
-    public Boolean checkToken(final @RequestHeader("x-access-token") String token) {
-        return authService.checkToken(token);
     }
 
     @PostMapping("change-password")

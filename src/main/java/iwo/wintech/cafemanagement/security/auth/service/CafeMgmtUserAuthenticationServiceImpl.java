@@ -1,5 +1,6 @@
 package iwo.wintech.cafemanagement.security.auth.service;
 
+import iwo.wintech.cafemanagement.dto.AdminDto;
 import iwo.wintech.cafemanagement.dto.LoginDto;
 import iwo.wintech.cafemanagement.dto.SignupDto;
 import iwo.wintech.cafemanagement.dto.UserDto;
@@ -39,11 +40,11 @@ public class CafeMgmtUserAuthenticationServiceImpl implements CafeMgmtUserAuthen
 
             return holder.createSession(optionalUser.get());
         }
-        throw ErrorCode.INVALID_CREDENTIALS.requestException("Invalid Login Credentials");
+        throw ErrorCode.INVALID_USER_CREDENTIALS.requestException("Invalid Login Credentials");
     }
 
     @Override
-    public boolean checkToken(final String token) {
+    public boolean checkToken(final String token, final AdminDto admin) {
         return holder.validateToken(token);
     }
 
@@ -62,7 +63,7 @@ public class CafeMgmtUserAuthenticationServiceImpl implements CafeMgmtUserAuthen
     private void updatePassword(final String newPassword, final User user, final String notificationText) {
         final Long id = user.getUserId();
         userService.updateUserPassword(id, passwordEncoder.encode(newPassword));
-        applicationEventPublisher.publishEvent(new UserNotificationEvent(id, EmailMessageType.PASSWORD_RESET, notificationText));
+        applicationEventPublisher.publishEvent(new UserNotificationEvent(user.getEmail(), EmailMessageType.PASSWORD_RESET, notificationText));
         holder.invalidate(user);
     }
 
@@ -82,15 +83,15 @@ public class CafeMgmtUserAuthenticationServiceImpl implements CafeMgmtUserAuthen
 
     private void validatePasswords(final ChangePasswordRequest request, final String password) {
         if (!passwordEncoder.matches(request.currentPassword(), password)) {
-            throw ErrorCode.INVALID_CREDENTIALS.requestException("password is incorrect");
+            throw ErrorCode.INVALID_USER_CREDENTIALS.requestException("password is incorrect");
         }
 
         if (!request.isPasswordValid()) {
-            throw ErrorCode.INVALID_CREDENTIALS.requestException("New passwords do not match");
+            throw ErrorCode.INVALID_USER_CREDENTIALS.requestException("New passwords do not match");
         }
 
         if (request.newPasswordMatchesOldPassword()) {
-            throw ErrorCode.INVALID_CREDENTIALS.requestException("New password cannot be the same as old password");
+            throw ErrorCode.INVALID_USER_CREDENTIALS.requestException("New password cannot be the same as old password");
         }
     }
 
