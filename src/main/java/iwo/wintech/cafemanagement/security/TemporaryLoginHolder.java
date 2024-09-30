@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -39,6 +40,17 @@ public class TemporaryLoginHolder {
 
     public void logout(final String token) {
         logingCache.invalidate(token);
+    }
+
+    public boolean validateToken(final String token) {
+        return logingCache.getIfPresent(token) != null;
+    }
+
+    public void invalidate(final User user) {
+        logingCache.asMap()
+                .entrySet()
+                .removeIf(entry -> Objects.equals(entry.getValue().user(), user));
+
     }
 
     @With

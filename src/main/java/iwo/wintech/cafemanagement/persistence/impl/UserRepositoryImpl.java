@@ -8,7 +8,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
-import java.sql.ResultSet;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -47,5 +47,122 @@ public class UserRepositoryImpl implements UserRepository {
         dbClient.sql(sql)
                 .paramSource(params)
                 .update();
+    }
+
+    @Override
+    public List<User> fetchByStatus(final String status) {
+        final String sql = """
+                SELECT user_id, first_name, last_name, email, phone_number, status, role, password
+                FROM user
+                WHERE status = :status
+                """;
+        final SqlParameterSource params = new MapSqlParameterSource("status", status);
+        return dbClient.sql(sql)
+               .paramSource(params)
+               .query(UserEntityMapper::mapRow)
+               .list();
+    }
+
+    @Override
+    public List<User> getAllUsers() {
+        final String sql = """
+                SELECT user_id, first_name, last_name, email, phone_number, status, role, password
+                FROM user
+                """;
+        return dbClient.sql(sql)
+               .query(UserEntityMapper::mapRow)
+               .list();
+    }
+
+    @Override
+    public List<User> findAllUsersById(final List<Long> userIds) {
+        final String sql = """
+                SELECT user_id, first_name, last_name, email, phone_number, status, role, password
+                FROM user
+                WHERE user_id IN (:userIds)
+                """;
+        final SqlParameterSource params = new MapSqlParameterSource("userIds", userIds);
+        return dbClient.sql(sql)
+               .paramSource(params)
+               .query(UserEntityMapper::mapRow)
+               .list();
+    }
+
+    @Override
+    public List<User> getAllUsersByRole(final String role) {
+        final String sql = """
+                SELECT user_id, first_name, last_name, email, phone_number, status, role, password
+                FROM user
+                WHERE role = :role
+                """;
+        final SqlParameterSource params = new MapSqlParameterSource("role", role);
+        return dbClient.sql(sql)
+               .paramSource(params)
+               .query(UserEntityMapper::mapRow)
+               .list();
+    }
+
+    @Override
+    public Optional<User> findById(final Long id) {
+        final String sql = """
+                SELECT user_id, first_name, last_name, email, phone_number, status, role, password
+                FROM user
+                WHERE user_id = :id
+                """;
+        final SqlParameterSource params = new MapSqlParameterSource("id", id);
+        return dbClient.sql(sql)
+                .paramSource(params)
+                .query(UserEntityMapper::mapRow)
+                .optional();
+    }
+
+    @Override
+    public void updateUser(final User updateRequest) {
+        final String sql = """
+                UPDATE user
+                SET first_name = :firstName, last_name = :lastName, phone_number = :phoneNumber
+                WHERE user_id = :id
+                """;
+        final SqlParameterSource params = new MapSqlParameterSource()
+               .addValue("id", updateRequest.getUserId())
+               .addValue("firstName", updateRequest.getFirstName())
+               .addValue("lastName", updateRequest.getLastName())
+               .addValue("phoneNumber", updateRequest.getPhoneNumber());
+
+        dbClient.sql(sql)
+               .paramSource(params)
+               .update();
+    }
+
+    @Override
+    public void updateUsersStatus(final List<Long> userIds, final String status) {
+        final String sql = """
+                UPDATE user
+                SET status = :status
+                WHERE user_id IN (:userIds)
+                """;
+        final SqlParameterSource params = new MapSqlParameterSource()
+               .addValue("status", status)
+               .addValue("userIds", userIds);
+
+        dbClient.sql(sql)
+               .paramSource(params)
+               .update();
+    }
+
+    @Override
+    public void updateUserPassword(final Long userId, final String password) {
+        final String sql = """
+                UPDATE user
+                SET password = :password
+                WHERE user_id = :id
+                """;
+        final SqlParameterSource params = new MapSqlParameterSource()
+               .addValue("id", userId)
+               .addValue("password", password);
+
+        dbClient.sql(sql)
+               .paramSource(params)
+               .update();
     }
 }

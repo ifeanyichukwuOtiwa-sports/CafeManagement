@@ -7,3 +7,11 @@ spring:
     password: ${DATASOURCE_PASSWORD:123456}
   liquibase:
     change-log: classpath:changelog/changelog-master.yaml
+  mail:
+    host: ${MAIL_HOST:sandbox.smtp.mailtrap.io}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:02faf21f0ac077}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail.smtp.starttls.enable: true
+      mail.smtp.auth: true

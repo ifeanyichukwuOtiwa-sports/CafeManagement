@@ -11,7 +11,7 @@ import java.io.Serializable;
 @Builder
 @Getter
 @With
-@EqualsAndHashCode
+@EqualsAndHashCode(of = {"userId", "email" })
 public class User implements Serializable {
 
     @Serial
