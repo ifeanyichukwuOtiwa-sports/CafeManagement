@@ -1,7 +1,10 @@
 package iwo.wintech.cafemanagement.exception;
 
 import lombok.Getter;
+import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -11,8 +14,11 @@ public class ErrorException extends RuntimeException {
     private final String uuid = UUID.randomUUID().toString();
     private String message;
     private String key;
-    private List<String> params = List.of();
-    private Map<String, Object> payload;
+    private List<String> params = new ArrayList<>();
+    private Map<String, Object> payload = new HashMap<>();
+
+    @Setter
+    private Integer status;
 
 
     public ErrorException(final String message, final String key) {
